@@ -1,0 +1,62 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Create new playlist</title>
+    <script>
+        document.addEventListener('DOMContentLoaded', function() {
+            const form = document.getElementById('playlist-form');
+            const input = document.getElementById('video-link');
+            const list = document.getElementById('playlist');
+
+            form.addEventListener('submit', function(event) {
+                event.preventDefault();
+
+                const videoLink = input.value;
+                const listItem = document.createElement('li');
+                listItem.textContent = videoLink;
+
+                list.appendChild(listItem);
+                input.value = '';
+            });
+
+	   document.getElementById('save-playlist').addEventListener('click', async function() {
+  	   const videoLinks = Array.from(list.children).map(li => li.textContent);
+  	   const response = await fetch('/save-playlist', {
+            	method: 'POST',
+   		headers: {
+      			'Content-Type': 'application/json'
+    		},
+    		body: JSON.stringify({ playlist: videoLinks })
+  	   });
+
+  	   const result = await response.json();
+  		if (result.status === 'success') {
+    			alert('Playlist saved successfully');
+  		} else {
+    			alert('Failed to save playlist');
+  		}
+	   });
+	   const savedPlaylist = {{ saved_playlist|tojson }};
+	   savedPlaylist.forEach(videoLink => {
+  	   	const listItem = document.createElement('li');
+  		listItem.textContent = videoLink;
+  		list.appendChild(listItem);
+	   });
+        });
+    </script>
+</head>
+<body>
+    <h1>Create new playlist</h1>
+    <p>Welcome, {{ username }}!</p>
+    <a href="{{ url_for('logout') }}">Logout</a>
+    <form id="playlist-form">
+        <label for="video-link">YouTube video link:</label>
+        <input type="url" id="video-link" required>
+        <button type="submit">Add to playlist</button>
+        <button type="button" id="save-playlist">Save Playlist</button>
+    </form>
+    <ul id="playlist"></ul>
+</body>
+</html>

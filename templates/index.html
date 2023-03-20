@@ -1,0 +1,81 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Register/Login</title>
+</head>
+<body>
+    <h1>Create new playlist</h1>
+    <h2>Register</h2>
+    <div id="register-error" class="error"></div>
+    <form id="register-form">
+        <label for="register-email">Email</label>
+        <input type="email" id="register-email" required><br>
+        <label for="register-username">Username</label>
+        <input type="text" id="register-username" required><br>
+        <label for="register-password">Password</label>
+        <input type="password" id="register-password" required><br>
+        <label for="register-password-confirm">Confirm password</label>
+        <input type="password" id="register-password-confirm" required><br>
+        <button type="button" onclick="register()">Register</button>
+    </form>
+
+    <h2>Login</h2>
+    <form id="login-form">
+        <label for="login-email">Email</label>
+        <input type="email" id="login-email" required><br>
+        <label for="login-password">Password</label>
+        <input type="password" id="login-password" required><br>
+        <button type="button" onclick="login()">Login</button>
+    </form>
+    <p id="login-error" style="color: red;"></p>
+
+    <script>
+        async function register() {
+            const email = document.getElementById("register-email").value;
+            const username = document.getElementById("register-username").value;
+            const password = document.getElementById("register-password").value;
+            const confirmPassword = document.getElementById("register-password-confirm").value;
+
+            const response = await fetch("/register", {
+                method: "POST",
+                headers: {
+                    "Content-Type": "application/json",
+                },
+                body: JSON.stringify({ email, username, password, confirm_password: confirmPassword }),
+  });
+            const result = await response.json();
+
+            if (result.status === "success") {
+                window.location.href = "/playlist";
+            } else {
+                const errorMessage = result.message || "Failed to register";
+                document.getElementById("register-error").innerText = errorMessage;
+            }
+        }
+
+        async function login() {
+            const email = document.getElementById("login-email").value;
+            const password = document.getElementById("login-password").value;
+
+            const response = await fetch("/login", {
+                method: "POST",
+                headers: {
+                    "Content-Type": "application/json",
+                },
+                body: JSON.stringify({ email, password }),
+            });
+
+            const result = await response.json();
+
+            if (result.status === "success") {
+                window.location.href = "/playlist";
+            } else {
+                const loginError = document.getElementById("login-error");
+                loginError.textContent = "Incorrect email or password";
+            }
+        }
+    </script>
+</body>
+</html>

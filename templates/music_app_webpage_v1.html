@@ -1,0 +1,35 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Create new playlist</title>
+    <script>
+        document.addEventListener('DOMContentLoaded', function() {
+            const form = document.getElementById('playlist-form');
+            const input = document.getElementById('video-link');
+            const list = document.getElementById('playlist');
+
+            form.addEventListener('submit', function(event) {
+                event.preventDefault();
+
+                const videoLink = input.value;
+                const listItem = document.createElement('li');
+                listItem.textContent = videoLink;
+
+                list.appendChild(listItem);
+                input.value = '';
+            });
+        });
+    </script>
+</head>
+<body>
+    <h1>Create new playlist</h1>
+    <form id="playlist-form">
+        <label for="video-link">YouTube video link:</label>
+        <input type="url" id="video-link" required>
+        <button type="submit">Add to playlist</button>
+    </form>
+    <ul id="playlist"></ul>
+</body>
+</html>
